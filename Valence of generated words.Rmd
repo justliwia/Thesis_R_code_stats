@@ -1,0 +1,155 @@
+---
+title: 'Add Valence Ratings to Generated Words'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Load necessary libraries
+library(readr)
+library(dplyr)
+library(tidyr)
+```
+
+```{r load-data}
+# Read participants' generated words and the valence dataset
+df_gen <- read_csv("participants_gen_words.csv")
+df_val <- clean_df
+```
+
+ 
+```{r attach-valence}
+# Convert generated words to long format
+df_long <- df_gen %>%
+  pivot_longer(
+    cols = starts_with("gen_word"),
+    names_to = "word_num",
+    values_to = "word"
+  )
+
+# Join with valence ratings
+df_long_val <- df_long %>%
+  left_join(
+    df_val,
+    by = c("word" = "Word")
+  )
+
+# Reshape back to wide format, extracting valence for each generated word
+df_val_wide <- df_long_val %>%
+  select(row_id, word_num, V.Mean.Sum) %>%
+  pivot_wider(
+    names_from = word_num,
+    values_from = V.Mean.Sum,
+    names_prefix = "valence_"
+  )
+
+# Combine with original generated words
+final_df <- df_gen %>%
+  left_join(df_val_wide, by = "row_id")
+```
+
+```{r save-data}
+# Write out the final dataset with valence ratings
+write_csv(final_df, "participants_gen_words_with_valence.csv")
+```
+
+```{r save-data}
+library(dplyr)
+
+# To drop a single column:
+#final_df2 <- final_df2 %>% 
+  #select(-var9)
+```
+
+```{r compute-mean-valence}
+# Calculate mean valence across the three generated-word valence columns
+final_df <- final_df2 %>%
+  mutate(
+    mean_valence = rowMeans(
+      select(., valence_gen_word1, valence_gen_word2, valence_gen_word3),
+      na.rm = TRUE
+    )
+  )
+```
+
+```{r compute-mean-valence}
+all.equal(nrow(Merged_data), nrow(final_df))
+
+Merged_data$mean_valence <- final_df$mean_valence
+```
+
+---
+title: 'Clean BRM-emot-submit Dataset'
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(dplyr)
+```
+
+```{r load-data}
+# Read the dataset
+df <- read_csv("C:/Users/Liwia/Desktop/thesis brainstorm/Warriner et al. words valance database/BRM-emot-submit.csv")
+```
+
+```{r clean-data}
+# Select only the 'word' and 'V.Mean.Sum' columns
+clean_df <- df %>%
+  select(Word, V.Mean.Sum)
+```
+
+```{r save-data}
+# Save the cleaned dataset
+write_csv(clean_df, "BRM-emot-submit_clean.csv")
+
+```
+
+```{r analysis, echo=TRUE}
+# 1. Load required libraries
+if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
+if (!requireNamespace("interactions", quietly = TRUE)) install.packages("interactions")
+library(tidyverse)      # data manipulation & visualization
+library(interactions)   # for moderation interaction plots
+
+# 2. Read in the data (adjust the file path as needed)
+
+
+lex_data <- Merged_data %>%
+  mutate(
+    LexicalBias   = mean_valence - 3,
+    ExposureIndex = exposure_index,  # ensure correct column name
+    IATScore      = iat_abs        # ensure correct column name
+  )
+
+# 4. Regression 1: Does multicultural exposure predict lexical bias?
+model1 <- lm(LexicalBias ~ ExposureIndex, data = lex_data)
+summary(model1)  # print regression output
+
+# 5. Regression 2: Does lexical bias predict implicit bias (IAT)?
+model2 <- lm(IATScore ~ LexicalBias, data = lex_data)
+summary(model2)  # print regression output
+
+# 6. Correlation between lexical bias and IAT score
+#    Pearson’s r tells us the strength and direction of the association
+cor.test(lex_data$LexicalBias, lex_data$IATScore, method = "pearson")
+
+# 7. Moderation analysis: does IAT score moderate the exposure → lexical bias link?
+model_mod <- lm(LexicalBias ~ ExposureIndex * IATScore, data = lex_data)
+summary(model_mod)  # interaction term tests moderation
+
+# 8. Visualize the interaction effect
+#    plots the slope of exposure at different levels of IAT
+interact_plot(
+  model_mod,
+  pred = ExposureIndex,
+  modx = IATScore,
+  plot.points = TRUE,
+  interval = TRUE,
+  colors = "Purples"
+)
+
+```
+
+

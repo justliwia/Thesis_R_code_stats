@@ -1,0 +1,32 @@
+---
+title: 'Clean BRM-emot-submit Dataset'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(dplyr)
+```
+
+```{r load-data}
+# Read the dataset
+df <- read_csv("C:/Users/Liwia/Desktop/thesis brainstorm/Warriner et al. words valance database/BRM-emot-submit.csv")
+```
+
+```{r clean-data}
+# Select only the 'word' and 'V.Mean.Sum' columns
+clean_df <- df %>%
+  select(Word, V.Mean.Sum)
+```
+
+```{r save-data}
+# Save the cleaned dataset
+write_csv(clean_df, "BRM-emot-submit_clean.csv")
+
+```
+
+
+
+
+

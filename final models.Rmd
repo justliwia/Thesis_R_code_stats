@@ -1,0 +1,249 @@
+---
+title: "final models"
+author: "Liwia Tarkowska"
+date: "2025-06-19"
+output: html_document
+---
+
+
+EXPOSURE VS IAT MODEL 
+
+```{r viz-model3, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(patchwork)
+
+
+# Updated regression models: exposure is now the predictor on the x-axis
+iat_ex <- lm(iat_abs ~ exposure_index, data = new_lexd)
+broom::tidy(iat_ex, conf.int = TRUE)
+
+explicit_ex <- lm(explicit_attitude_score ~ exposure_index, data = new_lexd)
+broom::tidy(explicit_ex, conf.int = TRUE)
+
+# Plot 1: IAT vs. Exposure (Exposure on x-axis)
+p1 <- ggplot(new_lexd, aes(x = exposure_index, y = iat_abs)) +
+  geom_point(color = "#DDA0DD", alpha = 0.6, size = 2) +
+  geom_smooth(method = "lm",
+              color = "#8B008B", fill = "#D8BFD8", alpha = 0.3, se = TRUE) +
+  labs(
+    title = "Exposure vs. IAT",
+    x     = "Exposure lvl",
+    y     = "|IAT|"
+  ) +
+  theme_minimal(base_family = "Georgia") +
+  theme(
+    plot.title      = element_text(size = 14, face = "bold"),
+    axis.title      = element_text(size = 12),
+    axis.text       = element_text(size = 10),
+    legend.position = "none"
+  )
+
+# Plot 2: Explicit Attitudes vs. Exposure (Exposure on x-axis)
+p2 <- ggplot(new_lexd, aes(x = exposure_index, y = explicit_attitude_score)) +
+  geom_point(color = "#DDA0DD", alpha = 0.6, size = 2) +
+  geom_smooth(method = "lm",
+              color = "#8B008B", fill = "#D8BFD8", alpha = 0.3, se = TRUE) +
+  labs(
+    title = "Exposure vs. Explicit Attitudes",
+    x     = "Exposure lvl",
+    y     = "Explicit Attitude"
+  ) +
+  theme_minimal(base_family = "Georgia") +
+  theme(
+    plot.title      = element_text(size = 14, face = "bold"),
+    axis.title      = element_text(size = 12),
+    axis.text       = element_text(size = 10),
+    legend.position = "none"
+  )
+
+p1
+
+
+my_cols <- c(point = "#DDA0DD", line = "#8B008B")
+par(family = "Georgia")
+
+
+with(new_lexd, {
+  plot(exposure_index, iat_abs,
+       pch    = 21,                   # filled circle
+       bg     = my_cols["point"],    # fill color
+       col    = my_cols["line"],     # border color
+       cex    = 1.2,                 # point size
+       main   = "Exposure vs. IAT",
+       xlab   = "Exposure lvl",
+       ylab   = "IAT")
+  
+
+  abline(
+    iat_ex <- lm(iat_abs ~ exposure_index, data = new_lexd),
+    col = my_cols["line"],
+    lwd = 2
+  )
+})
+
+```
+
+
+
+
+IMPLICIT ATTITUDES VS LEXICAL IN-GROUP FAVORITISM 
+```{r model2}
+model2 <- lm(iat_abs ~ valence_difference, data = your_data)
+tidy(model2, conf.int = TRUE)
+```
+
+```{r viz-model3, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
+library(ggplot2)
+ggplot(your_data, aes(x = valence_difference, y = iat_abs)) +
+  geom_point(shape = 21, fill = "#DDA0DD", color = "#8B008B", size = 3) +
+  geom_smooth(method = "lm", color = "#8B008B", se = TRUE) +
+  theme_minimal(base_family = "Georgia") +
+  labs(title = "Implicit Attitudes vs. Lexical In-Group Favoritism",
+       x = "Lexical In-Group Favoritism", y = "Implicit Attitude")
+```
+
+
+EXPLICIT ATTITUDES VS LEXICAL IN-GROUP FAVORITISM 
+
+```{r model1}
+model1 <- lm(explicit_attitude_score ~ valence_difference, data = your_data)
+tidy(model1, conf.int = TRUE)
+```
+
+```{r plot1}
+ggplot(your_data, aes(x = valence_difference, y = explicit_attitude_score)) +
+  geom_point(shape = 21, fill = "#DDA0DD", color = "#8B008B", size = 3) +
+  geom_smooth(method = "lm", color = "#8B008B", se = TRUE) +
+  theme_minimal(base_family = "Georgia") +
+  labs(title = "Explicit Attitudes vs. Lexical In-Group Favoritism",
+       x = "Lexical In-Group Favoritism", y = "Explicit Attitude")
+```
+
+Explicit Attitudes vs LEXICAL BIAS by Cultural Background
+
+```{r model3}
+model3 <- lm(explicit_attitude_score ~ valence_difference * student_type, data = your_data)
+tidy(model3, conf.int = TRUE)
+
+summary(model3)$r.squared
+
+```
+
+```{r plot3}
+ggplot(your_data, aes(x = valence_difference, y = explicit_attitude_score, color = student_type, fill = student_type)) +
+  geom_point(shape = 21, size = 3) +
+  geom_smooth(method = "lm", se = TRUE) +
+  scale_fill_manual(values = c("Polish students" = "#F3D1FF", "International students" = "#E0A6E0")) +
+  scale_color_manual(values = c("Polish students" = "#DDA0DD", "International students" = "#8B008B")) +
+  theme_minimal(base_family = "Georgia") +
+  labs(title = "Explicit attitudes vs. Lexical Bias by Cultural Background",
+       x = "Lexical In-Group Favoritism", y = "Explicit Attitude")
+
+
+ggplot(your_data, aes(x = valence_difference, y = explicit_attitude_score, color = student_type, fill = student_type)) +
+  geom_point(shape = 21, size = 3, stroke = 0.5, color = "black") +
+  geom_smooth(method = "lm", se = TRUE, alpha = 0.3) +
+  scale_fill_manual(values = c("Polish students" = "#E6CCE6", "International students" = "#D2B4DE")) +
+  scale_color_manual(values = c("Polish students" = "#A569BD", "International students" = "#884EA0")) +
+  theme_minimal(base_family = "Georgia") +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 12),
+    axis.title = element_text(size = 10),
+    axis.text = element_text(size = 9)
+  ) +
+  labs(
+    title = "Explicit Attitudes vs. Lexical Bias by Cultural Background",
+    x = "Lexical In-Group Favoritism",
+    y = "Explicit Attitude",
+    color = "Student Type",
+    fill = "Student Type"
+  )
+
+```
+
+
+Implicit Attitudes vs lexical bias by Cultural Background
+
+```{r model4}
+model5 <- lm(iat_abs ~ valence_difference * student_type, data = your_data)
+tidy(model5, conf.int = TRUE)
+
+summary(model5)$r.squared
+```
+
+```{r plot4}
+ggplot(your_data, aes(x = valence_difference, y = iat_abs, color = student_type, fill = student_type)) +
+  geom_point(shape = 21, size = 3) +
+  geom_smooth(method = "lm", se = TRUE) +
+  scale_fill_manual(values = c("Polish students" = "#F3D1FF", "International students" = "#E0A6E0")) +
+  scale_color_manual(values = c("Polish students" = "#DDA0DD", "International students" = "#8B008B")) +
+  theme_minimal(base_family = "Georgia") +
+  labs(title = "Implicit Attitudes vs. Lexical Bias by Cultural Background",
+       x = "Lexical In-Group Favoritism", y = "Implicit Attitude")
+
+```
+
+
+MULTICULTURAL EXPOSURE VS LEXICAL IN-GROUP FAVORITISM 
+```{r model4}
+model4 <- lm(exposure_index ~ valence_difference, data = your_data)
+tidy(model4, conf.int = TRUE)
+
+summary(model4)$r.squared
+```
+
+```{r plot6}
+#exposure vs valence 
+ggplot(your_data, aes(x = valence_difference, y = exposure_index)) +
+  geom_point(shape = 21, fill = "#DDA0DD", color = "#8B008B", size = 3) +
+  geom_smooth(method = "lm", color = "#8B008B", se = TRUE) +
+  theme_minimal(base_family = "Georgia") +
+  labs(title = "Multicultural Exposure vs. Lexical In-Group Favoritism",
+       x = "Lexical In-Group Favoritism", y = "Level of Exposure")
+```
+
+```{r plot6}
+# 1. Load the necessary libraries
+library(showtext)
+library(ggplot2)
+
+# 2. Enable showtext for plot rendering
+showtext_auto()
+
+# 3. Add the Georgia font by pointing to its path (should be present on Windows)
+font_add(family = "Georgia", regular = "C:/Windows/Fonts/georgia.ttf")
+
+```
+
+EXPOSURE VS IAT & EXPOSURE VS EXPLICIT 
+```{r plot6}
+library(ggplot2)
+library(dplyr)
+
+# Exposure vs IAT
+p1 <- ggplot(your_data, aes(x = exposure_index, y = iat_abs)) +
+  geom_point(color = "#8B008B", alpha = 0.6, size = 2.5) +
+  geom_smooth(method = "lm", color = "#8B008B", fill = "#DDA0DD", alpha = 0.2) +
+  labs(
+    title = "Exposure vs. IAT",
+    x = "Exposure lvl",
+    y = "|IAT|"
+  ) +
+  theme_minimal(base_family = "Georgia") +
+  theme(
+    plot.title = element_text(size = 30, face = "bold"),
+    axis.title.x = element_text(size = 25),
+    axis.title.y = element_text(size = 25),
+    axis.text = element_text(size = 20)
+  )
+
+p1
+
+# Linear model: IAT ~ Exposure
+model <- lm(iat_abs ~ exposure_index, data = your_data)
+
+# Summary of the model
+summary(model)
+
+```

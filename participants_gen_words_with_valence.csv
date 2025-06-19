@@ -1,0 +1,17 @@
+row_id,gen_word1,gen_word2,gen_word3,valence_gen_word1,valence_gen_word2,valence_gen_word3
+1,suspicious,bad,scetchy,3.48,3.24,NA
+2,composed,calm,depressed,NA,6.89,2.27
+3,handsome,educated,talkative,7.15,NA,5.56
+4,mean,bad,vile,2.43,3.24,2.21
+5,shameful,horrible,dishonest,3,2.33,3
+6,bourgeois,conservative,direct,NA,4.55,5.75
+7,generous,friendly,empathetic,7.43,7.84,NA
+8,violent,rich,ironic,2.26,6.83,5.42
+9,good,humble,self-deprecating,7.89,6.52,NA
+10,closed,quiet,sad,NA,6.47,2.1
+11,sad,dissapointed,angry,2.1,NA,2.53
+12,selfish,antisocial,greedy,3.3,3.21,2.1
+13,freaks,weird,mean,NA,5.09,2.43
+14,sneaky,smart,cunning,3.94,7.73,5.05
+15,musty,crusty,dusty,3.37,4.29,3.95
+16,mean,evil,toxic,2.43,2.34,2.35
