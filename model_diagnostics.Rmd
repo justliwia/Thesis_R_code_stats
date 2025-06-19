@@ -1,0 +1,53 @@
+---
+title: "Regression Model Diagnostics"
+author: "Liwia Tarkowska"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(car)
+library(broom)
+```
+
+## Model Diagnostics for All Regression Models
+
+```{r diagnostics}
+# Diagnostic function
+diagnose_model <- function(model, model_name = "Model") {
+  cat(paste0("\n==== ", model_name, " Diagnostics ====\n"))
+
+  # Summary
+  print(summary(model))
+
+  # VIF (only if >1 predictor)
+  if (length(coef(model)) > 2) {
+    cat("\nVIF:\n")
+    print(vif(model))
+  }
+
+  # Shapiro-Wilk test
+  cat("\nShapiro-Wilk Test:\n")
+  print(shapiro.test(resid(model)))
+
+  # Influential points
+  cooks <- cooks.distance(model)
+  infl <- which(cooks > 4 / length(cooks))
+  cat("\nInfluential Points (Cook's D > 4/n):\n")
+  print(infl)
+
+  # Diagnostic plots
+  par(mfrow = c(2, 2), family = "Georgia")
+  plot(model, which = 1:4)
+  par(mfrow = c(1, 1))
+}
+
+# Run diagnostics on each model
+diagnose_model(model1, "Model 1")
+diagnose_model(model2, "Model 2")
+diagnose_model(model3, "Model 3")
+diagnose_model(model4, "Model 4")
+diagnose_model(model5, "Model 5")
+diagnose_model(model6, "Model 6")
+```
