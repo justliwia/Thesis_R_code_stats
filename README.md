@@ -25,7 +25,10 @@ RMarkdown scripts:
 | `data_cleaning.Rmd`              | Main pipeline for cleaning and preparing participant data           |
 | `cleaning Warriner dataset.Rmd`  | Prepares the valence lexicon for use in later merging               |
 | `Valence of generated words.Rmd` | Matches participant words with valence scores and computes averages |
-| `final models.Rmd`               | Contains all final regression models and visualizations             |
+| `final models updated.Rmd`       | Contains all final regression models and visualizations             |
+| `models diagnostics.Rmd`         | Contains diagnostics of all final models                            |
+
+
 
 
 
