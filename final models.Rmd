@@ -216,7 +216,7 @@ font_add(family = "Georgia", regular = "C:/Windows/Fonts/georgia.ttf")
 
 ```
 
-EXPOSURE VS IAT & EXPOSURE VS EXPLICIT 
+EXPOSURE VS IAT 
 ```{r plot6}
 library(ggplot2)
 library(dplyr)
